@@ -1,0 +1,25 @@
+version: "2.4"
+
+services:
+
+  redis-url-shortener:
+    image: redis
+    container_name: redis-url-shortener
+    restart: always
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
+    command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
+
+  url-shortener:
+    build:
+      context: .
+    container_name: url-shortener
+    restart: on-failure
+    ports:
+      - ${APPLICATION_PORT}:${APPLICATION_PORT}
+    environment:
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_HOST: ${REDIS_HOST}
+      APPLICATION_LINK: ${APPLICATION_LINK}
+      APPLICATION_PORT: ${APPLICATION_PORT}
